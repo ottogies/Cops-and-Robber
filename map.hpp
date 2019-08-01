@@ -1,5 +1,7 @@
 #define ERASED 0
 
+#include <set>
+
 typedef unsigned int vertex_id;
 
 class Edge {
@@ -7,8 +9,8 @@ class Edge {
 	vertex_id dst;
 public:
 	Edge(int, int);
-	Str();
-	Dst();
+	vertex_id Str();
+	vertex_id Dst();
 }; 
 
 class Vertex {
@@ -19,15 +21,15 @@ class Vertex {
 public:
 	Vertex();
 	Vertex(int, int, int);
-	ID();
-	X();
-	Y();
+	vertex_id ID();
+	int X();
+	int Y();
 	Edge getEdge(int);
 	EdgeSize();
-	erase();
-	push(Edge);
-	exclude(vertex_id);
-	showEdges();
+	void erase();
+	void push(Edge);
+	void exclude(vertex_id);
+	void showEdges();
 };
 
 Vertex* makeMap(int *);

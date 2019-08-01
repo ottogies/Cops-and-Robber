@@ -1,15 +1,17 @@
 project(copsnrobs)
 
+set (CMAKE_CXX_STANDARD 11)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-//set (Boost_ARCHITECTURE "-x64")
-//add_compile_definitions(Boost_ADDITIONAL_VERSIONS="1.64.00;1.64")
-
 find_package(Boost REQUIRED
   COMPONENTS
   system)
+  
+include_directories(
+  websocket
+)
 
 set(SOURCES
   game.hpp
@@ -28,7 +30,6 @@ add_executable(${CMAKE_PROJECT_NAME}
 
 target_include_directories(${CMAKE_PROJECT_NAME} BEFORE
   PRIVATE
-  ../websocketpp
   ${Boost_INCLUDE_DIR}
 )
 

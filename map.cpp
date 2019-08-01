@@ -11,8 +11,8 @@ Edge::Edge(int str_, int dst_){
 	str = static_cast<vertex_id>(str_);
 	dst = static_cast<vertex_id>(dst_);
 }
-Edge::Str(){ return str; }
-Edge::Dst(){ return dst; }
+vertex_id Edge::Str(){ return str; }
+vertex_id Edge::Dst(){ return dst; }
 
 Vertex::Vertex(){}
 Vertex::Vertex(int id_, int x_, int y_){
@@ -20,22 +20,22 @@ Vertex::Vertex(int id_, int x_, int y_){
 	x = x_;
 	y = y_;
 }
-Vertex::ID(){ return id; }
-Vertex::X(){ return x; }
-Vertex::Y(){ return y; }
+vertex_id Vertex::ID(){ return id; }
+int Vertex::X(){ return x; }
+int Vertex::Y(){ return y; }
 Edge Vertex::getEdge(int i){
 	return edges[i];
 }
-Vertex::EdgeSize(){
+int Vertex::EdgeSize(){
 	return edges.size();
 }
-Vertex::erase(){
+void Vertex::erase(){
 	id = ERASED;
 }
-Vertex::push(Edge edge){
+void Vertex::push(Edge edge){
 	edges.push_back(edge);
 }
-Vertex::exclude(vertex_id erased){
+void Vertex::exclude(vertex_id erased){
 	std::vector <Edge>::iterator it = edges.begin();
 	while(it != edges.end()){
 		if((*it).Str() == erased || (*it).Dst() == erased)
@@ -44,7 +44,7 @@ Vertex::exclude(vertex_id erased){
 			it++;
 	}
 }
-Vertex::showEdges(){
+void Vertex::showEdges(){
 	std::cout << "Vertex " << id << " has\t";
 	for(int i=0; i<edges.size(); i++)
 		std::cout << edges[i].Str() << "->" << edges[i].Dst() << "\t";
