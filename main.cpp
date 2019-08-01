@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#include "game.hpp"
+#include "message.hpp"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 
@@ -15,32 +15,30 @@ using websocketpp::lib::bind;
 // pull out the type of messages sent by our config
 typedef server::message_ptr message_ptr;
 
-// Define a callback to handle incoming messages
-void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
-    std::cout << "on_message called with hdl: " << hdl.lock().get()
-              << " and message: " << msg->get_payload()
-              << std::endl;
-
-    // check for a special command to instruct the server to stop listening so
-    // it can be cleanly exited.
-    if (msg->get_payload() == "stop-listening") {
-        s->stop_listening();
-        return;
-    }
-    
-    //std::cout << "Player Address" << hdl.lock() << std::endl;
-    if (msg->get_payload() == "matching request") {
-    	game(s, hdl);	
-	}
-   
-
-    try {
-        s->send(hdl, msg->get_payload(), msg->get_opcode());
-    } catch (websocketpp::exception const & e) {
-        std::cout << "Echo failed because: "
-                  << "(" << e.what() << ")" << std::endl;
-    }
-}
+//// Define a callback to handle incoming messages
+//void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
+//    std::cout << "on_message called with hdl: " << hdl.lock().get()
+//              << " and message: " << msg->get_payload()
+//              << std::endl;
+//
+//    // check for a special command to instruct the server to stop listening so
+//    // it can be cleanly exited.
+//    if (msg->get_payload() == "stop-listening") {
+//        s->stop_listening();
+//        return;
+//    }
+//    
+//    if(msg->get_payload() == "start_game") {
+//    	sendMap()
+//	}
+//
+//    try {
+//        s->send(hdl, msg->get_payload(), msg->get_opcode());
+//    } catch (websocketpp::exception const & e) {
+//        std::cout << "Echo failed because: "
+//                  << "(" << e.what() << ")" << std::endl;
+//    }
+//}
 
 int main() {
     // Create a server endpoint

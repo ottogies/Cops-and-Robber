@@ -1,0 +1,14 @@
+*.exe
+*.o
+.objs/
+boost_1_64_mingw/
+build/
+websocketpp-master/
+git/
+*.win
+*.dev
+*.layout
+*.depend
+*.cbp
+/obj/
+/bin/

@@ -1,3 +1,5 @@
+#define ERASED 0
+
 typedef unsigned int vertex_id;
 
 class Edge {
@@ -5,6 +7,8 @@ class Edge {
 	vertex_id dst;
 public:
 	Edge(int, int);
+	Str();
+	Dst();
 }; 
 
 class Vertex {
@@ -18,12 +22,18 @@ public:
 	ID();
 	X();
 	Y();
+	Edge getEdge(int);
+	EdgeSize();
 	erase();
 	push(Edge);
+	exclude(vertex_id);
+	showEdges();
 };
 
-void makeMap();
+Vertex* makeMap(int *);
+//Vertex* makeMap();
 int randomNum(int, int);
 void createVertex(int, int, Vertex*);
-void excludeVertex(int, Vertex*, std::vector <int> &);
+void excludeVertex(int, Vertex*, std::set <vertex_id> &);
 void createEdge(int, int, Vertex*);
+void excludeEdge(std::set <vertex_id> &, int, Vertex*);
