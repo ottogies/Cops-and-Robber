@@ -2,7 +2,7 @@
 #include <string>
 #include "message.hpp"
 #include "map.hpp"
-#include "assign.hpp"
+#include "room.hpp"
 
 // Define a callback to handle incoming messages
 void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
@@ -42,6 +42,11 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		string str;
 		str = assignRole(msg->get_payload(), room);
 	}*/
+	
+	if(msg->get_payload() == "room") {
+		Room room("my room", 2);
+		std::cout << room.ID() << room.Title() << room.Capacity() << std::endl;
+	}
 
     try {
         s->send(hdl, msg->get_payload(), msg->get_opcode());

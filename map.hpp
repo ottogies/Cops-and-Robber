@@ -1,3 +1,5 @@
+#include <vector>
+#include <set>
 #define ERASED 0
 
 typedef unsigned int vertex_id;
