@@ -1,7 +1,5 @@
 #define ERASED 0
 
-#include <set>
-
 typedef unsigned int vertex_id;
 
 class Edge {

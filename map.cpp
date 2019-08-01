@@ -5,8 +5,6 @@
 #include <set>
 #include "map.hpp"
 
-//#define ERASED 0
-
 Edge::Edge(int str_, int dst_){
 	str = static_cast<vertex_id>(str_);
 	dst = static_cast<vertex_id>(dst_);
