@@ -22,6 +22,7 @@ set(SOURCES
   message.cpp
   map.hpp
   map.cpp
+  main.cpp
 )
 
 add_executable(${CMAKE_PROJECT_NAME}
