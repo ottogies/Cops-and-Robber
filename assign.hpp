@@ -13,13 +13,13 @@ class Room {
 	int rob_num;
 public:
 	Room();
-	Cop_size();
-	Rob_size();
-	Cop_num();
-	Rob_num();
-	setSize();
-	add_Cop_num();
-	add_Rob_num();
+	int Cop_size();
+	int Rob_size();
+	int Cop_num();
+	int Rob_num();
+	void setSize();
+	void add_Cop_num();
+	void add_Rob_num();
 };
 
 class Player{

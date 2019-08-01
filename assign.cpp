@@ -6,13 +6,13 @@ Room::Room(){
 	cop_num = 0;
 	rob_num = 0;
 }
-Room::Cop_size(){ return cop_size; }
-Room::Rob_size(){ return rob_size; }
-Room::Cop_num(){ return cop_num; }
-Room::Rob_num(){ return rob_num; }
-Room::add_Cop_num(){ cop_num++; }
-Room::add_Rob_num(){ rob_num++; }
-Room::setSize(){
+int Room::Cop_size(){ return cop_size; }
+int Room::Rob_size(){ return rob_size; }
+int Room::Cop_num(){ return cop_num; }
+int Room::Rob_num(){ return rob_num; }
+void Room::add_Cop_num(){ cop_num++; }
+void Room::add_Rob_num(){ rob_num++; }
+void Room::setSize(){
 	user_size = 2;
 	cop_size = 1;
 	rob_size = 1;
