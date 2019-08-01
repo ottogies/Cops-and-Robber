@@ -25,7 +25,7 @@ public:
 	int X();
 	int Y();
 	Edge getEdge(int);
-	EdgeSize();
+	int EdgeSize();
 	void erase();
 	void push(Edge);
 	void exclude(vertex_id);

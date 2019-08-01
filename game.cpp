@@ -28,7 +28,7 @@ user Game::getPlayer2(){
 	return player2;
 }
 
-Game::makeMap(){
+void Game::makeMap(){
 	this->map = Map();
 }
 

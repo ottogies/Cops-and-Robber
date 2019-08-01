@@ -24,7 +24,7 @@ public:
 	Game(user, user);
 	user getPlayer1();
 	user getPlayer2();
-	makeMap();
+	void makeMap();
 	Map getMap();
 };
 
