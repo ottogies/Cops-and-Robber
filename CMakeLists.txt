@@ -23,6 +23,8 @@ set(SOURCES
   map.hpp
   map.cpp
   main.cpp
+  room.cpp
+  room.hpp
 )
 
 add_executable(${CMAKE_PROJECT_NAME}
