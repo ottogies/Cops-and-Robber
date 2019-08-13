@@ -2,10 +2,10 @@
 
 //enum Role { Cop, Rob };
 
-Room::Room(){
-	cop_num = 0;
-	rob_num = 0;
-}
+//Room::Room(){
+//	cop_num = 0;
+//	rob_num = 0;
+//}
 int Room::Cop_size(){ return cop_size; }
 int Room::Rob_size(){ return rob_size; }
 int Room::Cop_num(){ return cop_num; }
