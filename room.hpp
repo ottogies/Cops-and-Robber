@@ -1,5 +1,7 @@
 #include <websocketpp/config/asio_no_tls.hpp>
 
+#include <list>
+
 typedef websocketpp::connection_hdl User;
 
 class Room {
@@ -15,7 +17,7 @@ public:
 	int Capacity();
 	void enter(User user);
 	int size();
-	printUsers();
+	void printUsers();
 };
 
 unsigned int createRoom(std::string, int);

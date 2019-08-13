@@ -22,7 +22,7 @@ void Room::enter(User user){
 int Room::size(){
 	return users.size();
 }
-Room::printUsers(){
+void Room::printUsers(){
 	std::list <User>::iterator it2;
 		for(it2 = users.begin(); it2 != users.end(); it2++){
 			std::cout << (*it2).lock() << " ";
