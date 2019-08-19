@@ -32,6 +32,12 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
         return;
     }
     
+    if(req == "init") {
+    	response << "player_init," << hdl.lock();
+    	res = response.str();
+    	s->send(hdl, res, msg->get_opcode());
+	}
+    
     if(req == "start_game") {
     	int vertex_size;
     	Vertex* vertices = makeMap(&vertex_size);
