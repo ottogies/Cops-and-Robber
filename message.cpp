@@ -5,11 +5,21 @@
 #include "map.hpp"
 #include "room.hpp"
 
+//std::map<websocketpp::connection_hdl, Connection> connection_map;
+
 // Define a callback to handle incoming messages
 void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
     std::cout << "on_message called with hdl: " << hdl.lock().get()
               << " and message: " << msg->get_payload()
               << std::endl;
+           
+//	if (connection_map.count(hdl) == 0) {
+//		// make
+//		conn = 
+//	}
+//	else {
+//		conn = connection_map.find(hdl)->second;
+//	}
 	 
 	std::stringstream request(msg->get_payload()), response;
 	std::string req, res;
@@ -42,6 +52,13 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		}
 	}
 	
+	if(req == "request_room_list") {
+		response = roomList();
+		res = response.str();
+		std::cout << res << std::endl;
+		s->send(hdl, res, msg->get_opcode());
+	}
+	
 	if(req == "request_room_join") {
 		std::string id_;
 		unsigned int id;
@@ -54,12 +71,55 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 			response << "room_join_accept," << room.ID() << delim << room.Title() << delim << room.Capacity();
 			res = response.str();
 			s->send(hdl, res, msg->get_opcode());
+			std::list <User> users = room.Users();
+			std::list <User>::iterator user;
+			int count = 0;
+			std::stringstream newUsr, orgUsrs;
+			std::string newU, orgU;
+			for(user = users.begin(); user != users.end(); user++){
+				std::cout << (*user).lock() << " ";
+				if(hdl.lock() == (*user).lock()){
+					newUsr << "room_player_join," << (*user).lock() << delim << count << delim << 0;
+					newU = newUsr.str();
+				}else {
+					orgUsrs << "room_player_join," << (*user).lock() << delim << count << delim << 0 << '/';
+				}
+				count++;
+			}
+			for(user = users.begin(); user != users.end(); user++){
+				if(hdl.lock() == (*user).lock()){
+					for(int i=0; i<users.size()-1; i++){
+						getline(orgUsrs, orgU, '/');
+						s->send(*user, orgU, msg->get_opcode());
+					}
+				}else {
+					s->send(*user, newU, msg->get_opcode());
+				}
+			}
+			std::cout << std::endl;
 		}else {
 			response << "room_join_reject," << id << delim << err;
 			res = response.str();
 			s->send(hdl, res, msg->get_opcode());
 		}
-		
+	}
+	
+	if(req == "request_room_leave") {
+		std::string id_;
+		unsigned int id;
+		getline(request, id_, delim);
+		id = static_cast<unsigned int>(stoi(id_));
+		if(checkRoom(id) != 1){		// 1 = No room number
+			Room room = leaveRoom(id, hdl);
+			response << "room_player_leave," << hdl.lock();
+			res = response.str();
+			std::list <User> users = room.Users();
+			std::list <User>::iterator user;
+			for(user = users.begin(); user != users.end(); user++){
+				s->send(*user, res, msg->get_opcode());
+			}
+			s->send(hdl, res, msg->get_opcode());	//자기가 없는 방에 나가기를 요청했을때도 보내짐. 자기한테만 
+		}
 	}
 	
 	if(req == "request_room_create") {

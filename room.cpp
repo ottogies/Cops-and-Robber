@@ -16,8 +16,19 @@ Room::Room(std::string title_, int capacity_){
 unsigned int Room::ID(){ return room_id; }
 std::string Room::Title(){ return title; }
 int Room::Capacity(){ return capacity; }
+std::list <User> Room::Users(){ return users; }
 void Room::enter(User user){
 	users.push_back(user);
+}
+int Room::leave(User user){
+	std::list <User>::iterator it;
+	for(it = users.begin(); it != users.end(); it++){
+		if((*it).lock() == user.lock()){
+			users.erase(it);
+			return 0;
+		}
+	}
+	return 1;
 }
 int Room::size(){
 	return users.size();
@@ -69,6 +80,29 @@ int checkRoom(unsigned int id){
 		if(err = "Room is full")
 			return 2;
 	}
+}
+
+Room leaveRoom(unsigned int room_id, User user){
+	std::list <Room>::iterator room;
+	for(room = rooms.begin(); room != rooms.end(); room++){
+		if((*room).ID() == room_id){
+			if(!(*room).leave(user))
+				return *room;
+			else{					//user not in the room
+				Room emptyRoom;
+				return emptyRoom;
+			}
+		}
+	}
+}
+
+std::stringstream roomList(){
+	std::stringstream room_list;
+	room_list << "room_list," << rooms.size();
+	std::list <Room>::iterator room;
+	for(room = rooms.begin(); room != rooms.end(); room++)
+		room_list << delim << (*room).ID() << delim << (*room).Title() << delim << (*room).Capacity() << delim << (*room).size();
+	return room_list;
 }
 
 void check(){
