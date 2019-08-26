@@ -7,6 +7,22 @@
 std::list <Room> rooms;
 std::set <unsigned int> room_ids;
 
+User::User(websocketpp::connection_hdl hdl){
+	id = hdl;
+}
+std::shared_ptr<void> User::ID() const {
+	return id.lock();
+}
+websocketpp::connection_hdl User::hdl() const {
+	return id;
+}
+bool User::operator==(const User& user){
+	if(id.lock() == user.ID())
+		return true;
+	else
+		return false;
+}
+
 Room::Room(){}
 Room::Room(std::string title_, int capacity_){
 	room_id = static_cast<unsigned int>(randomNum(1, 9999));
@@ -23,7 +39,8 @@ void Room::enter(User user){
 int Room::leave(User user){
 	std::list <User>::iterator it;
 	for(it = users.begin(); it != users.end(); it++){
-		if((*it).lock() == user.lock()){
+		//if((*it).lock() == user.lock()){
+		if(*it == user){
 			users.erase(it);
 			return 0;
 		}
@@ -34,10 +51,10 @@ int Room::size(){
 	return users.size();
 }
 void Room::printUsers(){
-	std::list <User>::iterator it2;
-		for(it2 = users.begin(); it2 != users.end(); it2++){
-			std::cout << (*it2).lock() << " ";
-		} 
+	std::list <User>::iterator user;
+	for(user = users.begin(); user != users.end(); user++)
+		std::cout << (*user).ID() << " ";
+	std::cout << std::endl;
 }
 
 unsigned int createRoom(std::string title, int capacity){

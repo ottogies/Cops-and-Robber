@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "message.hpp"
+#include "access.hpp"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 
@@ -54,6 +55,10 @@ int main() {
 
         // Register our message handler
         echo_server.set_message_handler(bind(&on_message,&echo_server,::_1,::_2));
+        
+        echo_server.set_open_handler(bind(&on_open,&echo_server,::_1));
+        
+        echo_server.set_close_handler(bind(&on_close,&echo_server,::_1));
 
         // Listen on port 12370
         echo_server.listen(12370);

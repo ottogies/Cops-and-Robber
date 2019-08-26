@@ -7,6 +7,12 @@
 
 //std::map<websocketpp::connection_hdl, Connection> connection_map;
 
+void on_open(server* s, websocketpp::connection_hdl hdl) {
+	std::cout << hdl.lock() << " joined the page" << std::endl; 
+}
+void on_close(server* s, websocketpp::connection_hdl hdl) {
+	std::cout << hdl.lock() << " closed the page" << std::endl;
+}
 // Define a callback to handle incoming messages
 void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
     std::cout << "on_message called with hdl: " << hdl.lock().get()
@@ -83,23 +89,24 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 			std::stringstream newUsr, orgUsrs;
 			std::string newU, orgU;
 			for(user = users.begin(); user != users.end(); user++){
-				std::cout << (*user).lock() << " ";
-				if(hdl.lock() == (*user).lock()){
-					newUsr << "room_player_join," << (*user).lock() << delim << count << delim << 0;
+				std::cout << (*user).ID() << " ";
+				if(hdl.lock() == (*user).ID()){
+					newUsr << "room_player_join," << (*user).ID() << delim << count << delim << 0;
 					newU = newUsr.str();
+					orgUsrs << "room_player_join," << (*user).ID() << delim << count << delim << 1 << '/'; /*추가*/ 
 				}else {
-					orgUsrs << "room_player_join," << (*user).lock() << delim << count << delim << 0 << '/';
+					orgUsrs << "room_player_join," << (*user).ID() << delim << count << delim << 0 << '/';
 				}
 				count++;
 			}
 			for(user = users.begin(); user != users.end(); user++){
-				if(hdl.lock() == (*user).lock()){
-					for(int i=0; i<users.size()-1; i++){
+				if(hdl.lock() == (*user).ID()){
+					for(int i=0; i<users.size(); i++){
 						getline(orgUsrs, orgU, '/');
-						s->send(*user, orgU, msg->get_opcode());
+						s->send((*user).hdl(), orgU, msg->get_opcode());
 					}
 				}else {
-					s->send(*user, newU, msg->get_opcode());
+					s->send((*user).hdl(), newU, msg->get_opcode());
 				}
 			}
 			std::cout << std::endl;
@@ -122,7 +129,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 			std::list <User> users = room.Users();
 			std::list <User>::iterator user;
 			for(user = users.begin(); user != users.end(); user++){
-				s->send(*user, res, msg->get_opcode());
+				s->send((*user).hdl(), res, msg->get_opcode());
 			}
 			s->send(hdl, res, msg->get_opcode());	//자기가 없는 방에 나가기를 요청했을때도 보내짐. 자기한테만 
 		}

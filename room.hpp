@@ -4,12 +4,18 @@
 
 #include "message.hpp"
 
-typedef websocketpp::connection_hdl User;
+//typedef websocketpp::connection_hdl User;
 
-//class User{
-//	websocketpp::connection_hdl hdl;
-//	std::string user_name;
-//};
+class User{
+	websocketpp::connection_hdl id;
+	std::string user_name;
+public:
+	User(websocketpp::connection_hdl);
+	//websocketpp::connection_hdl Hdl() const;
+	std::shared_ptr<void> ID() const;
+	websocketpp::connection_hdl hdl() const;
+	bool operator==(const User&);
+};
 
 class Room {
 	unsigned int room_id;
