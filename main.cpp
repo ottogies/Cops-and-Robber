@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include "message.hpp"
-#include "access.hpp"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 
