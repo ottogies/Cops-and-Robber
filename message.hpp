@@ -3,12 +3,6 @@
 
 #define delim ','
 
-//struct User {
-//	websocketpp::connection_hdl hdl;
-//	std::string user_name;
-//	int id;
-//};
-
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
 
