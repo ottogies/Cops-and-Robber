@@ -27,7 +27,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 	getline(request, req, delim);
 	User user;
 
-	if(req == "init"){
+	if(req == "request_username"){
 		std::string user_name;
 		getline(request, user_name, delim);
 		setName(hdl, user_name);
