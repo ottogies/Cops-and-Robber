@@ -1,3 +1,6 @@
+#ifndef ROOM_H
+#define ROOM_H
+
 #include <websocketpp/config/asio_no_tls.hpp>
 
 #include <list>
@@ -57,3 +60,5 @@ int checkRoom(unsigned int);
 std::map <int, User> leaveRoom(unsigned int, User);
 std::stringstream roomList();
 void check();
+
+#endif
