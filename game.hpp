@@ -1,7 +1,7 @@
 #include <map>
-//#include "room.hpp"
+#include "room.hpp"
 #include "message.hpp"
-//#include "map.hpp"
+#include "map.hpp"
 
 
 typedef enum { Cop, Rob } Role;

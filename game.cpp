@@ -1,5 +1,5 @@
 #include "game.hpp"
-//#include "map.hpp"
+#include "map.hpp"
 
 std::list <Game> games;
 
