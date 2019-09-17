@@ -4,9 +4,7 @@
 
 #include "message.hpp"
 
-//typedef websocketpp::connection_hdl User;
-
-class User{
+class User {
 	websocketpp::connection_hdl id;
 	std::string user_name;
 public:

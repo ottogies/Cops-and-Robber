@@ -9,6 +9,8 @@
 
 using namespace std;
 
+typedef enum { Cop, Rob } Role;
+
 class User{
 	int id;
 	string name;
@@ -29,19 +31,27 @@ void sayHi(User user){
 	cout << "hi" << user.Name() << endl;
 }
 
-int main(){
-	map <int, User> users;
-	User user1(1000, "sungmook");
-	User user2(1001, "hakchoen");
-	User user3(1002, "hansu");
-	users.insert( pair <int, User> (0, user1));
-	users.insert( pair <int, User> (1, user2));
-	users.insert( pair <int, User> (2, user3));
-	map <int, User>::iterator it;
-	for(it = users.begin(); it != users.end(); it++){
-		cout << "id: " << it->second.ID() << " name: " << it->second.Name() << endl;
-		sayHi(it->second);
+Role stor(std::string role){
+	try{
+		if(role == "cop")
+			return Cop;
+		else if(role == "rob")
+			return Rob;
+		else
+			throw "Wrong string format";
+	}catch(const char* err){
+		std::cout << err << std::endl;
 	}
+}
+
+int main(){
+	unsigned int game_id;
+	game_id = 4563;
+	stringstream ss;
+	ss << "make_map," << game_id;
+	string str = ss.str();
+	cout << str << endl;
+	
 }
 
 

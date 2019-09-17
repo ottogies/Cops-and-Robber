@@ -1,33 +1,35 @@
-#include <websocketpp/config/asio_no_tls.hpp>
+#include <map>
+//#include "room.hpp"
+#include "message.hpp"
+//#include "map.hpp"
 
-#include <websocketpp/server.hpp>
 
-typedef websocketpp::server<websocketpp::config::asio> server;
-typedef websocketpp::connection_hdl user;
-
-typedef server::message_ptr message_ptr;
-
-class Map {
-	int width;
-	int height;
-public:
-	Map();
-	int getWidth();
-	int getHeight();
-};
+typedef enum { Cop, Rob } Role;
 
 class Game {
-	user player1;
-	user player2;
-	Map map; 
+	unsigned int game_id;
+	unsigned int room_id;
+	int cop_num;
+	int rob_num;
+	Vertex* map;
+	int map_size;
+	std::multimap <Role, User> players;
 public:
-	Game(user, user);
-	user getPlayer1();
-	user getPlayer2();
-	void makeMap();
-	Map getMap();
+	Game(unsigned int, int, int, int, int);
+	unsigned int ID();
+	unsigned int Room_id();
+	int Cop_num();
+	int Rob_num();
+	Vertex* Map();
+	int Map_size();
+	std::multimap <Role, User> Players();
+	void accept(User, Role);
+	int size();
 };
 
-void game(server*, websocketpp::connection_hdl, message_ptr);
-void user_scan(Game);
-void createGame();
+unsigned int startGame(unsigned int, int, int, int, int);
+Game getGame(unsigned int);
+Role stor(std::string);
+std::string rtos(Role);
+int selectRole(unsigned int, User, Role);
+int allSelected(unsigned int);

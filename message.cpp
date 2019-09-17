@@ -4,6 +4,7 @@
 #include "message.hpp"
 #include "map.hpp"
 #include "room.hpp"
+#include "game.hpp"
 
 void on_open(server* s, websocketpp::connection_hdl hdl) {
 	std::cout << hdl.lock() << " joined the page" << std::endl;
@@ -39,26 +40,6 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		user = getUser(hdl);
 		std::cout << user.User_name() << std::endl;
 	}
-    
-//    if(req == "start_game") {
-//    	int vertex_size;
-//    	Vertex* vertices = makeMap(&vertex_size);
-//    	for(int i=0; i<vertex_size; i++){
-//    		if(vertices[i].ID() == ERASED) continue;
-//			response.str("");
-//    		response << "vertex_create," << vertices[i].ID() << delim << vertices[i].X() << delim << vertices[i].Y();
-//			res = response.str();
-//			s->send(hdl, res, msg->get_opcode());
-//		}
-//		for(int i=0; i<vertex_size; i++){
-//			for(int j=0; j<vertices[i].EdgeSize(); j++){
-//				response.str("");
-//				response << "edge_create," << (vertices[i].getEdge(j)).Str() << delim << (vertices[i].getEdge(j)).Dst();
-//				res = response.str();
-//				s->send(hdl, res, msg->get_opcode());
-//			}
-//		}
-//	}
 	
 	if(req == "request_room_list") {
 		response = roomList();
@@ -185,13 +166,24 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 	}
 	
 	if(req == "request_game_start") {
-		std::string id_;
-		unsigned int id;
-		getline(request, id_, delim);
-		id = static_cast<unsigned int>(stoi(id_));
-		Room room = getRoom(id);
+		std::string room_id_, width_, height_, cop_num_, rob_num_;
+		unsigned int room_id, game_id;
+		int width, height, cop_num, rob_num;
+		getline(request, room_id_, delim);
+		getline(request, width_, delim);
+		getline(request, height_, delim);
+		getline(request, cop_num_, delim);
+		getline(request, rob_num_, delim);
+		room_id = static_cast<unsigned int>(stoi(room_id_));
+		width = stoi(width_);
+		height = stoi(height_);
+		cop_num = stoi(cop_num_);
+		rob_num = stoi(rob_num_);
+		Room room = getRoom(room_id);
 		if(room.Owner(user)){
-			response << "game_start," << randomNum(1, 1000) << delim << randomNum(1, 2) << delim << randomNum(1, 2);
+			game_id = startGame(room_id, cop_num, rob_num, width, height);
+			Game game = getGame(game_id);
+			response << "game_start," << game.ID() << delim << game.Cop_num() << delim << game.Rob_num();
 			res = response.str();
 			std::map <int, User> users = room.Users();
 			std::map <int, User>::iterator it;
@@ -199,7 +191,99 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 				s->send(it->second.Hdl(), res, msg->get_opcode());
 			}
 		}
-	} 
+	}
+	
+	if(req == "request_role_select"){
+		std::string id_, role_;
+		unsigned int id;
+		Role role;
+		getline(request, id_, delim);
+		getline(request, role_, delim);
+		id = static_cast<unsigned int>(stoi(id_));
+		role = stor(role_);
+		if(!selectRole(id, user, role)){
+			Game game = getGame(id);
+			Room room = getRoom(game.Room_id());
+			response << "role_select," << user.ID() << delim << rtos(role);
+			res = response.str();
+			std::map <int, User> users = room.Users();
+			std::map <int, User>::iterator it;
+			for(it = users.begin(); it != users.end(); it++)
+				s->send(it->second.Hdl(), res, msg->get_opcode());
+			if(allSelected(id)){
+				std::multimap <Role, User> players = game.Players();
+				std::multimap <Role, User>::iterator player;
+				response.str("");
+				response << "game_role_data," << players.size();
+				for(player = players.begin(); player != players.end(); player++)
+					response << delim << player->second.ID() << delim << player->second.User_name() << delim << rtos(player->first);
+				res = response.str();
+				for(it = users.begin(); it != users.end(); it++)
+					s->send(it->second.Hdl(), res, msg->get_opcode());
+				// make map and send data next
+//				std::cout << req << std::endl;
+//				//request.str("");
+//				//request << "make_map," << id;
+//				std::stringstream nextreq;
+//				nextreq << "make_map," << id;
+//				req = nextreq.str();		
+//				std::cout << req << std::endl;
+			}
+		}
+	}
+	
+	if(req == "request_map_data") {
+		std::string id_;
+		unsigned int id;
+		getline(request, id_, delim);
+		id = static_cast<unsigned int>(stoi(id_));
+		Game game = getGame(id);
+		Room room = getRoom(game.Room_id());
+		std::map <int, User> users = room.Users();
+		std::map <int, User>::iterator it;
+    	//int vertex_size;
+    	//Vertex* vertices = makeMap(&vertex_size);
+    	int map_size = game.Map_size();
+    	Vertex* map = game.Map();
+    	for(int i=0; i<map_size; i++){
+    		if(map[i].ID() == ERASED) continue;
+			response.str("");
+    		response << "vertex_create," << map[i].ID() << delim << map[i].X() << delim << map[i].Y();
+			res = response.str();
+			std::cout << res << std::endl;
+			for(it = users.begin(); it != users.end(); it++){
+				s->send(it->second.Hdl(), res, msg->get_opcode());
+			}
+			//s->send(hdl, res, msg->get_opcode());
+		}
+		for(int i=0; i<map_size; i++){
+			for(int j=0; j<map[i].EdgeSize(); j++){
+				response.str("");
+				response << "edge_create," << (map[i].getEdge(j)).Str() << delim << (map[i].getEdge(j)).Dst();
+				res = response.str();
+				std:: cout << res << std::endl;
+				for(it = users.begin(); it != users.end(); it++){
+					s->send(it->second.Hdl(), res, msg->get_opcode());
+				}
+				//s->send(hdl, res, msg->get_opcode());
+			}
+		}
+//    	for(int i=0; i<vertex_size; i++){
+//    		if(vertices[i].ID() == ERASED) continue;
+//			response.str("");
+//    		response << "vertex_create," << vertices[i].ID() << delim << vertices[i].X() << delim << vertices[i].Y();
+//			res = response.str();
+//			s->send(hdl, res, msg->get_opcode());
+//		}
+//		for(int i=0; i<vertex_size; i++){
+//			for(int j=0; j<vertices[i].EdgeSize(); j++){
+//				response.str("");
+//				response << "edge_create," << (vertices[i].getEdge(j)).Str() << delim << (vertices[i].getEdge(j)).Dst();
+//				res = response.str();
+//				s->send(hdl, res, msg->get_opcode());
+//			}
+//		}
+	}
 
 //	// check for a special command to instruct the server to stop listening so
 //    // it can be cleanly exited.

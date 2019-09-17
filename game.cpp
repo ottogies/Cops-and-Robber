@@ -1,110 +1,110 @@
-#include <websocketpp/config/asio_no_tls.hpp>
-
-#include <websocketpp/server.hpp>
-
-#include <iostream>
-#include <queue>
-#include <cstdlib>
-#include <ctime>
-#include <string>
 #include "game.hpp"
-#include "map.hpp"
+//#include "map.hpp"
 
-typedef websocketpp::server<websocketpp::config::asio> server;
-typedef websocketpp::connection_hdl user;
+std::list <Game> games;
 
-std::queue <user> waiting_list;
-
-Game::Game(user user1, user user2){
-	player1 = user1;
-	player2 = user2;
+Game::Game(unsigned int room_id_, int cop_num_, int rob_num_, int width, int height){
+	game_id = static_cast <unsigned int>(randomNum(1, 9999));
+	room_id = room_id_;
+	cop_num = cop_num_;
+	rob_num = rob_num_;
+	map = makeMap(width, height);
+	map_size = width * height;
+}
+unsigned int Game::ID(){ return game_id; }
+unsigned int Game::Room_id(){ return room_id; }
+int Game::Cop_num(){ return cop_num; }
+int Game::Rob_num(){ return rob_num; }
+Vertex* Game::Map(){ return map; }
+int Game::Map_size(){ return map_size; }
+std::multimap <Role, User> Game::Players(){ return players; }
+void Game::accept(User user, Role role){
+	players.insert( std::pair<Role, User>(role, user) );
+}
+int Game::size(){
+	return players.size();
 }
 
-user Game::getPlayer1(){
-	return player1;
+unsigned int startGame(unsigned int room_id, int cop_num, int rob_num, int width, int height) {
+	Game game(room_id, cop_num, rob_num, width, height);
+	games.push_back(game);
+	return game.ID();
 }
 
-user Game::getPlayer2(){
-	return player2;
-}
-
-void Game::makeMap(){
-	this->map = Map();
-}
-
-Map Game::getMap(){
-	return map;
-}
-
-Map::Map(){
-	srand(static_cast<unsigned int>(time(NULL)));
-	width = rand() % 6 + 5;			/* 5~10 사이의 난수 생성 */ 
-	height = rand() % 6 + 5;
-}
-
-int Map::getWidth(){
-	return width;
-}
-
-int Map::getHeight(){
-	return height;
-}
-
-void game(server* s, user hdl, message_ptr msg){
-
-	//waiting_list.push(hdl);
-	
-	//createGame();
-	//std::string str = "vertex_create,";
-	//std::string str2;
-	//char str[128];
-	//char str[15] = "vertex_create,";;
-	char str2[128];
-	
-	Vertex* vertices;
-	
-	//vertices = makeMap();
-	
-//	for(int i=0; i<N; i++){
-//		char str[100] = "vertex_create,";
-//		sprintf(str, "vertex_create,%d,%d,%d",
-//			vertices[i].ID(),vertices[i].X(),vertices[i].Y());
-////		sprintf(str2, "%d", vertices[i].ID());
-////		strcat(str, str2);
-////		strcat(str, ",");
-////		sprintf(str2, "%d", vertices[i].X());
-////		strcat(str, str2);
-////		strcat(str, ",");
-////		sprintf(str2, "%d", vertices[i].Y());
-////		strcat(str, str2);
-////		strcat(str, ",");
-//		std::cout << str << std::endl;
-//		s->send(hdl, str, msg->get_opcode());
-//	}
-	/*
-	len = sprintf(buf, "Hello,\n");
-
-    for (i=0; i<5; i++)
-        len += sprintf(buf + len, "%d ",i);
-	*/
-	//s->send(hdl, msg->get_payload(), msg->get_opcode());
-}
-
-void createGame() {
-	user user1, user2;
-	if(waiting_list.size() >= 2){
-		user1 = waiting_list.front();
-		waiting_list.pop();
-		user2 = waiting_list.front();
-		waiting_list.pop();
-		Game game(user1, user2);
-		game.makeMap();
-		user_scan(game);
+Game getGame(unsigned int game_id) {
+	std::list <Game>::iterator game;
+	for(game = games.begin(); game != games.end(); game++){
+		if((*game).ID() == game_id){
+			return *game;
+		}
 	}
 }
 
-void user_scan(Game game) {
-	std::cout << game.getPlayer1().lock() << std::endl;
-	std::cout << game.getPlayer2().lock() << std::endl;
-	std::cout << game.getMap().getWidth() << "x" << game.getMap().getHeight() << std::endl;
+Role stor(std::string str){
+	try{
+		if(str == "cop")
+			return Cop;
+		else if(str == "rob")
+			return Rob;
+		else
+			throw "Wrong string format";
+	}catch(const char* err){
+		std::cout << err << std::endl;
+	}
+}
+
+std::string rtos(Role role){
+	if(role == Cop)
+		return "cop";
+	else if(role == Rob)
+		return "rob";
+}
+
+int selectRole(unsigned int game_id, User user, Role role){
+	int count = 0;
+	std::list <Game>::iterator game;
+	for(game = games.begin(); game != games.end(); game++)
+		if((*game).ID() == game_id)
+			break;
+	if(game == games.end())		// no game number
+		return 1;
+	unsigned int room_id = (*game).Room_id();
+	Room room = getRoom(room_id);
+	if(room.Index(user) == -1)		// user not in the room
+		return 1;
+	std::cout << "selected Role: " << role << " " << rtos(role) << std::endl;
+	std::multimap <Role, User> players = (*game).Players();
+	std::multimap <Role, User>::iterator player;
+	for(player = players.begin(); player != players.end(); player++)
+		if(player->first == role)
+			count++;
+	if(role == Cop){
+		if(count < (*game).Cop_num()){
+			(*game).accept(user, role);
+			std::cout << "count: " << count << " Cop_num: " << (*game).Cop_num() << std::endl;
+			return 0;
+		}
+	}else {
+		if(count < (*game).Rob_num()){
+			(*game).accept(user, role);
+			std::cout << "count: " << count << " Rob_num: " << (*game).Rob_num() << std::endl;
+			return 0;
+		}
+	}
+	std::cout << "player size: " << (*game).size() << std::endl;
+	return 1;
+}
+
+int allSelected(unsigned int game_id){
+	std::list <Game>::iterator it;
+	for(it = games.begin(); it != games.end(); it++)
+		if((*it).ID() == game_id)
+			break;
+	std::cout << "player size: " << (*it).size() << std::endl;
+	Game game = getGame(game_id);
+	std::cout << "Cop_num: " << game.Cop_num() << " Rob_num: " << game.Rob_num() << " player size: " << game.size() << std::endl;
+	if(game.Cop_num() + game.Rob_num() == game.size())
+		return 1;
+	else
+		return 0;
 }

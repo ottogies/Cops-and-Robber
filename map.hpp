@@ -33,7 +33,8 @@ public:
 	void showEdges();
 };
 
-Vertex* makeMap(int *);
+Vertex* makeMap(int, int);
+//Vertex* makeMap(int *);
 //Vertex* makeMap();
 int randomNum(int, int);
 void createVertex(int, int, Vertex*);

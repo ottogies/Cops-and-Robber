@@ -49,11 +49,13 @@ void Vertex::showEdges(){
 	std::cout << std::endl;
 }
 
-Vertex* makeMap(int *vertex_size) {
+Vertex* makeMap(int width, int height) {
+//Vertex* makeMap(int *vertex_size) {
 //Vertex* makeMap() {
-	int width, height, num;
-	width = randomNum(4, 7);
-	height = randomNum(3, 6);
+	//int width, height, num;
+	//width = randomNum(4, 7);
+	//height = randomNum(3, 6);
+	int num;
 	num = width * height;
 	Vertex* vertices = new Vertex[num];
 	std::set <vertex_id> unfilled;
@@ -69,7 +71,7 @@ Vertex* makeMap(int *vertex_size) {
 	for(it=unfilled.begin(); it!=unfilled.end(); it++)
 		std::cout << *it << " ";
 		
-	*vertex_size = num;
+	//*vertex_size = num;
 	return vertices;	
 }
 
