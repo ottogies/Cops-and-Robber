@@ -1,0 +1,7 @@
+socket = new WebSocket("ws://localhost:12370")
+socket.send("request_username,hakcheon") socket.send("request_username,sungmook") socket.send("request_username,hansu")
+socket.send("request_room_list")
+socket.send("request_room_create,abc,3")
+socket.send("request_room_join")
+socket.send("request_game_start,0000,10,10,2,1")
+socket.send("request_role_select,0000,cop")

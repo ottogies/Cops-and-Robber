@@ -16,8 +16,6 @@ include_directories(
 set(SOURCES
   game.hpp
   game.cpp
-  assign.hpp
-  assign.cpp
   message.hpp
   message.cpp
   map.hpp
