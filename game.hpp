@@ -1,3 +1,6 @@
+#ifndef GAME_H
+#define GAME_H
+
 #include <map>
 #include "room.hpp"
 #include "message.hpp"
@@ -33,3 +36,5 @@ Role stor(std::string);
 std::string rtos(Role);
 int selectRole(unsigned int, User, Role);
 int allSelected(unsigned int);
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef MAP_H
+#define MAP_H
+
 #include <vector>
 #include <set>
 
@@ -41,3 +44,5 @@ void createVertex(int, int, Vertex*);
 void excludeVertex(int, Vertex*, std::set <vertex_id> &);
 void createEdge(int, int, Vertex*);
 void excludeEdge(std::set <vertex_id> &, int, Vertex*);
+
+#endif
