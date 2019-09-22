@@ -241,6 +241,10 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		Room room = getRoom(game.Room_id());
 		std::map <int, User> users = room.Users();
 		std::map <int, User>::iterator it;
+		response << "game_map_data_start";
+		res = response.str();
+		for(it = users.begin(); it != users.end(); it++)
+			s->send(it->second.Hdl(), res, msg->get_opcode());
     	//int vertex_size;
     	//Vertex* vertices = makeMap(&vertex_size);
     	int map_size = game.Map_size();
@@ -283,6 +287,11 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 //				s->send(hdl, res, msg->get_opcode());
 //			}
 //		}
+		response.str("");
+		response << "game_map_data_end";
+		res = response.str();
+		for(it = users.begin(); it != users.end(); it++)
+			s->send(it->second.Hdl(), res, msg->get_opcode());
 	}
 
 //	// check for a special command to instruct the server to stop listening so
