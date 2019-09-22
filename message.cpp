@@ -238,7 +238,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 				response.str("");
 				response << "game_role_data," << players.size();
 				for(int i=0; i<players.size(); i++)
-					response << delim << players[i].User().ID() << delim << players[i].User().User_name() << delim << rtos(players[i].Rol());
+					response << delim << players[i].Usr().ID() << delim << players[i].Usr().User_name() << delim << rtos(players[i].Rol());
 				res = response.str();
 				for(it = users.begin(); it != users.end(); it++)
 					s->send(it->second.Hdl(), res, msg->get_opcode());
@@ -264,7 +264,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		//for(it = users.begin(); it != users.end(); it++)
 		//	s->send(it->second.Hdl(), res, msg->get_opcode());
 		for(int i=0; i<players.size(); i++)
-			s->send(players[i].User().Hdl(), res, msg->get_opcode());
+			s->send(players[i].Usr().Hdl(), res, msg->get_opcode());
     	//int vertex_size;
     	//Vertex* vertices = makeMap(&vertex_size);
     	int map_size = game.Map_size();
@@ -278,7 +278,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 			//for(it = users.begin(); it != users.end(); it++)
 			//	s->send(it->second.Hdl(), res, msg->get_opcode());
 			for(int i=0; i<players.size(); i++)
-				s->send(players[i].User().Hdl(), res, msg->get_opcode());
+				s->send(players[i].Usr().Hdl(), res, msg->get_opcode());
 		}
 		for(int i=0; i<map_size; i++){
 			for(int j=0; j<map[i].EdgeSize(); j++){
@@ -289,7 +289,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 				//for(it = users.begin(); it != users.end(); it++)
 				//	s->send(it->second.Hdl(), res, msg->get_opcode());
 				for(int i=0; i<players.size(); i++)
-					s->send(players[i].User().Hdl(), res, msg->get_opcode());
+					s->send(players[i].Usr().Hdl(), res, msg->get_opcode());
 			}
 		}
 //    	for(int i=0; i<vertex_size; i++){
@@ -313,7 +313,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		//for(it = users.begin(); it != users.end(); it++)
 		//	s->send(it->second.Hdl(), res, msg->get_opcode());
 		for(int i=0; i<players.size(); i++)
-			s->send(players[i].User().Hdl(), res, msg->get_opcode());	
+			s->send(players[i].Usr().Hdl(), res, msg->get_opcode());	
 	}
 
 //	// check for a special command to instruct the server to stop listening so

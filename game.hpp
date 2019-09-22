@@ -20,7 +20,7 @@ public:
 		user = user_;
 		role = role_;
 	}
-	User User();
+	User Usr();
 	Role Rol();
 };
 

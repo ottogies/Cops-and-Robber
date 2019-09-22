@@ -8,7 +8,7 @@ std::list <Game> games;
 //	user = user_;
 //	role = role_;
 //}
-User Player::User() { return user; }
+User Player::Usr() { return user; }
 Role Player::Rol(){ return role; }
 
 Game::Game(unsigned int room_id_, int cop_num_, int rob_num_, int width, int height){
@@ -97,7 +97,7 @@ int selectRole(unsigned int game_id, User user, Role role){
 	for(int i=0; i<players.size(); i++){
 		if(players[i].Rol() == role)
 			count++;
-		if(players[i].User() == user)
+		if(players[i].Usr() == user)
 			return 1;
 	}
 	if(role == Cop){
