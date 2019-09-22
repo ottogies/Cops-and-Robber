@@ -44,7 +44,7 @@ Role stor(std::string str){
 	try{
 		if(str == "cop")
 			return Cop;
-		else if(str == "rob")
+		else if(str == "robber")
 			return Rob;
 		else
 			throw "Wrong string format";
@@ -57,7 +57,7 @@ std::string rtos(Role role){
 	if(role == Cop)
 		return "cop";
 	else if(role == Rob)
-		return "rob";
+		return "robber";
 }
 
 int selectRole(unsigned int game_id, User user, Role role){
