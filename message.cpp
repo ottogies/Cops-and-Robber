@@ -203,9 +203,8 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 			res = response.str();
 			std::map <int, User> users = room.Users();
 			std::map <int, User>::iterator it;
-			for(it = users.begin(); it != users.end(); it++){
+			for(it = users.begin(); it != users.end(); it++)
 				s->send(it->second.Hdl(), res, msg->get_opcode());
-			}
 		}
 	}
 	
@@ -226,23 +225,23 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 			for(it = users.begin(); it != users.end(); it++)
 				s->send(it->second.Hdl(), res, msg->get_opcode());
 			if(allSelected(id)){
-				std::multimap <Role, User> users_with_role = game.Users();
-				std::multimap <Role, User>::iterator itr;
+//				std::multimap <Role, User> users_with_role = game.Users();
+//				std::multimap <Role, User>::iterator itr;
+//				response.str("");
+//				response << "game_role_data," << users_with_role.size();
+//				for(itr = users_with_role.begin(); itr != users_with_role.end(); itr++)
+//					response << delim << itr->second.ID() << delim << itr->second.User_name() << delim << rtos(itr->first);
+//				res = response.str();
+//				for(it = users.begin(); it != users.end(); it++)
+//					s->send(it->second.Hdl(), res, msg->get_opcode());
+				std::vector <Player> players = game.Players();
 				response.str("");
-				response << "game_role_data," << users_with_role.size();
-				for(itr = users_with_role.begin(); itr != users_with_role.end(); itr++)
-					response << delim << itr->second.ID() << delim << itr->second.User_name() << delim << rtos(itr->first);
+				response << "game_role_data," << players.size();
+				for(int i=0; i<players.size(); i++)
+					response << delim << players[i].User().ID() << delim << players[i].User().User_name() << delim << rtos(players[i].Rol());
 				res = response.str();
 				for(it = users.begin(); it != users.end(); it++)
 					s->send(it->second.Hdl(), res, msg->get_opcode());
-				// make map and send data next
-//				std::cout << req << std::endl;
-//				//request.str("");
-//				//request << "make_map," << id;
-//				std::stringstream nextreq;
-//				nextreq << "make_map," << id;
-//				req = nextreq.str();		
-//				std::cout << req << std::endl;
 			}
 		}
 	}
@@ -257,12 +256,15 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		//std::map <int, User> users = room.Users();
 		//std::map <Role, User> users = game.Users();
 		//std::map <Role, User>::iterator it;
-		std::multimap <Role, User> users = game.Users();
-		std::multimap <Role, User>::iterator it;
+		//std::multimap <Role, User> users = game.Users();
+		//std::multimap <Role, User>::iterator it;
+		std::vector <Player> players = game.Players();
 		response << "game_map_data_start";
 		res = response.str();
-		for(it = users.begin(); it != users.end(); it++)
-			s->send(it->second.Hdl(), res, msg->get_opcode());
+		//for(it = users.begin(); it != users.end(); it++)
+		//	s->send(it->second.Hdl(), res, msg->get_opcode());
+		for(int i=0; i<players.size(); i++)
+			s->send(players[i].User().Hdl(), res, msg->get_opcode());
     	//int vertex_size;
     	//Vertex* vertices = makeMap(&vertex_size);
     	int map_size = game.Map_size();
@@ -273,10 +275,10 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
     		response << "vertex_create," << map[i].ID() << delim << map[i].X() << delim << map[i].Y();
 			res = response.str();
 			std::cout << res << std::endl;
-			for(it = users.begin(); it != users.end(); it++){
-				s->send(it->second.Hdl(), res, msg->get_opcode());
-			}
-			//s->send(hdl, res, msg->get_opcode());
+			//for(it = users.begin(); it != users.end(); it++)
+			//	s->send(it->second.Hdl(), res, msg->get_opcode());
+			for(int i=0; i<players.size(); i++)
+				s->send(players[i].User().Hdl(), res, msg->get_opcode());
 		}
 		for(int i=0; i<map_size; i++){
 			for(int j=0; j<map[i].EdgeSize(); j++){
@@ -284,10 +286,10 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 				response << "edge_create," << (map[i].getEdge(j)).Str() << delim << (map[i].getEdge(j)).Dst();
 				res = response.str();
 				std:: cout << res << std::endl;
-				for(it = users.begin(); it != users.end(); it++){
-					s->send(it->second.Hdl(), res, msg->get_opcode());
-				}
-				//s->send(hdl, res, msg->get_opcode());
+				//for(it = users.begin(); it != users.end(); it++)
+				//	s->send(it->second.Hdl(), res, msg->get_opcode());
+				for(int i=0; i<players.size(); i++)
+					s->send(players[i].User().Hdl(), res, msg->get_opcode());
 			}
 		}
 //    	for(int i=0; i<vertex_size; i++){
@@ -308,8 +310,10 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		response.str("");
 		response << "game_map_data_end";
 		res = response.str();
-		for(it = users.begin(); it != users.end(); it++)
-			s->send(it->second.Hdl(), res, msg->get_opcode());
+		//for(it = users.begin(); it != users.end(); it++)
+		//	s->send(it->second.Hdl(), res, msg->get_opcode());
+		for(int i=0; i<players.size(); i++)
+			s->send(players[i].User().Hdl(), res, msg->get_opcode());	
 	}
 
 //	// check for a special command to instruct the server to stop listening so

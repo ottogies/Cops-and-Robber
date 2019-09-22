@@ -1,7 +1,15 @@
 #include "game.hpp"
 #include "map.hpp"
+#include "room.hpp"
 
 std::list <Game> games;
+
+//Player::Player(User user_, Role role_){
+//	user = user_;
+//	role = role_;
+//}
+User Player::User() { return user; }
+Role Player::Rol(){ return role; }
 
 Game::Game(unsigned int room_id_, int cop_num_, int rob_num_, int width, int height){
 	game_id = static_cast <unsigned int>(randomNum(1, 9999));
@@ -17,12 +25,16 @@ int Game::Cop_num(){ return cop_num; }
 int Game::Rob_num(){ return rob_num; }
 Vertex* Game::Map(){ return map; }
 int Game::Map_size(){ return map_size; }
-std::multimap <Role, User> Game::Users(){ return users; }
+//std::multimap <Role, User> Game::Users(){ return users; }
+std::vector <Player> Game::Players(){ return players; }
 void Game::accept(User user, Role role){
-	users.insert( std::pair<Role, User>(role, user) );
+	//users.insert( std::pair<Role, User>(role, user) );
+	Player player(user, role);
+	players.push_back(player);
 }
 int Game::size(){
-	return users.size();
+	//return users.size();
+	return players.size();
 }
 
 unsigned int startGame(unsigned int room_id, int cop_num, int rob_num, int width, int height) {
@@ -73,12 +85,19 @@ int selectRole(unsigned int game_id, User user, Role role){
 	if(room.Index(user) == -1)		// user not in the room
 		return 1;
 	std::cout << "selected Role: " << role << " " << rtos(role) << std::endl;
-	std::multimap <Role, User> users = (*game).Users();
-	std::multimap <Role, User>::iterator it;
-	for(it = users.begin(); it != users.end(); it++){
-		if(it->first == role)
+	//std::multimap <Role, User> users = (*game).Users();
+	//std::multimap <Role, User>::iterator it;
+//	for(it = users.begin(); it != users.end(); it++){
+//		if(it->first == role)
+//			count++;
+//		if(it->second == user)
+//			return 1;
+//	}
+	std::vector <Player> players = (*game).Players();
+	for(int i=0; i<players.size(); i++){
+		if(players[i].Rol() == role)
 			count++;
-		if(it->second == user)
+		if(players[i].User() == user)
 			return 1;
 	}
 	if(role == Cop){
