@@ -112,17 +112,33 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 			std::map <int, User> users = room.Users();
 			std::map <int, User>::iterator it;
 			for(it = users.begin(); it != users.end(); it++){
-				response.str("");
-				response << "room_player_join," << it->second.ID() << delim << it->second.User_name() << delim 
-						 << room.Index(it->second) << delim << it->second.local(hdl) << delim << room.Owner(it->second);
-				res = response.str();
 				if(!(it->second == user)){
+					response.str("");
+					response << "room_player_join," << it->second.ID() << delim << it->second.User_name() << delim 
+						     << room.Index(it->second) << delim << user.local(it->second.Hdl()) << delim << room.Owner(it->second);
+					res = response.str();
 					s->send(user.Hdl(), res, msg->get_opcode());
 				}else {
 					std::map <int, User>::iterator itr;
-					for(itr = users.begin(); itr != users.end(); itr++)
+					for(itr = users.begin(); itr != users.end(); itr++){
+						response.str("");
+						response << "room_player_join," << it->second.ID() << delim << it->second.User_name() << delim 
+							 	 << room.Index(it->second) << delim << itr->second.local(it->second.Hdl()) << delim << room.Owner(it->second);
+						res = response.str();
 						s->send(itr->second.Hdl(), res, msg->get_opcode());
+					}
 				}
+//				response.str("");
+//				response << "room_player_join," << it->second.ID() << delim << it->second.User_name() << delim 
+//						 << room.Index(it->second) << delim << it->second.local(hdl) << delim << room.Owner(it->second);
+//				res = response.str();
+//				if(!(it->second == user)){
+//					s->send(user.Hdl(), res, msg->get_opcode());
+//				}else {
+//					std::map <int, User>::iterator itr;
+//					for(itr = users.begin(); itr != users.end(); itr++)
+//						s->send(itr->second.Hdl(), res, msg->get_opcode());
+//				}
 			}
 			/*¿©±îÁö*/ 
 		}else {
@@ -210,12 +226,12 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 			for(it = users.begin(); it != users.end(); it++)
 				s->send(it->second.Hdl(), res, msg->get_opcode());
 			if(allSelected(id)){
-				std::multimap <Role, User> players = game.Players();
-				std::multimap <Role, User>::iterator player;
+				std::multimap <Role, User> users_with_role = game.Users();
+				std::multimap <Role, User>::iterator itr;
 				response.str("");
-				response << "game_role_data," << players.size();
-				for(player = players.begin(); player != players.end(); player++)
-					response << delim << player->second.ID() << delim << player->second.User_name() << delim << rtos(player->first);
+				response << "game_role_data," << users_with_role.size();
+				for(itr = users_with_role.begin(); itr != users_with_role.end(); itr++)
+					response << delim << itr->second.ID() << delim << itr->second.User_name() << delim << rtos(itr->first);
 				res = response.str();
 				for(it = users.begin(); it != users.end(); it++)
 					s->send(it->second.Hdl(), res, msg->get_opcode());
@@ -237,9 +253,12 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		getline(request, id_, delim);
 		id = static_cast<unsigned int>(stoi(id_));
 		Game game = getGame(id);
-		Room room = getRoom(game.Room_id());
-		std::map <int, User> users = room.Users();
-		std::map <int, User>::iterator it;
+		//Room room = getRoom(game.Room_id());
+		//std::map <int, User> users = room.Users();
+		//std::map <Role, User> users = game.Users();
+		//std::map <Role, User>::iterator it;
+		std::multimap <Role, User> users = game.Users();
+		std::multimap <Role, User>::iterator it;
 		response << "game_map_data_start";
 		res = response.str();
 		for(it = users.begin(); it != users.end(); it++)

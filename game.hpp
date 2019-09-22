@@ -16,7 +16,7 @@ class Game {
 	int rob_num;
 	Vertex* map;
 	int map_size;
-	std::multimap <Role, User> players;
+	std::multimap <Role, User> users;
 public:
 	Game(unsigned int, int, int, int, int);
 	unsigned int ID();
@@ -25,7 +25,7 @@ public:
 	int Rob_num();
 	Vertex* Map();
 	int Map_size();
-	std::multimap <Role, User> Players();
+	std::multimap <Role, User> Users();
 	void accept(User, Role);
 	int size();
 };

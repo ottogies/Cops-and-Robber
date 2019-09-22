@@ -17,12 +17,12 @@ int Game::Cop_num(){ return cop_num; }
 int Game::Rob_num(){ return rob_num; }
 Vertex* Game::Map(){ return map; }
 int Game::Map_size(){ return map_size; }
-std::multimap <Role, User> Game::Players(){ return players; }
+std::multimap <Role, User> Game::Users(){ return users; }
 void Game::accept(User user, Role role){
-	players.insert( std::pair<Role, User>(role, user) );
+	users.insert( std::pair<Role, User>(role, user) );
 }
 int Game::size(){
-	return players.size();
+	return users.size();
 }
 
 unsigned int startGame(unsigned int room_id, int cop_num, int rob_num, int width, int height) {
@@ -73,11 +73,14 @@ int selectRole(unsigned int game_id, User user, Role role){
 	if(room.Index(user) == -1)		// user not in the room
 		return 1;
 	std::cout << "selected Role: " << role << " " << rtos(role) << std::endl;
-	std::multimap <Role, User> players = (*game).Players();
-	std::multimap <Role, User>::iterator player;
-	for(player = players.begin(); player != players.end(); player++)
-		if(player->first == role)
+	std::multimap <Role, User> users = (*game).Users();
+	std::multimap <Role, User>::iterator it;
+	for(it = users.begin(); it != users.end(); it++){
+		if(it->first == role)
 			count++;
+		if(it->second == user)
+			return 1;
+	}
 	if(role == Cop){
 		if(count < (*game).Cop_num()){
 			(*game).accept(user, role);
@@ -91,7 +94,7 @@ int selectRole(unsigned int game_id, User user, Role role){
 			return 0;
 		}
 	}
-	std::cout << "player size: " << (*game).size() << std::endl;
+	std::cout << "user size: " << (*game).size() << std::endl;
 	return 1;
 }
 
@@ -100,9 +103,9 @@ int allSelected(unsigned int game_id){
 	for(it = games.begin(); it != games.end(); it++)
 		if((*it).ID() == game_id)
 			break;
-	std::cout << "player size: " << (*it).size() << std::endl;
+	std::cout << "user size: " << (*it).size() << std::endl;
 	Game game = getGame(game_id);
-	std::cout << "Cop_num: " << game.Cop_num() << " Rob_num: " << game.Rob_num() << " player size: " << game.size() << std::endl;
+	std::cout << "Cop_num: " << game.Cop_num() << " Rob_num: " << game.Rob_num() << " user size: " << game.size() << std::endl;
 	if(game.Cop_num() + game.Rob_num() == game.size())
 		return 1;
 	else
