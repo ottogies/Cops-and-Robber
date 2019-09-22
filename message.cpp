@@ -193,14 +193,13 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		}
 	}
 	
-	if(req == "request_role_select"){
+	if(req == "request_game_role_select"){
 		std::string id_, role_;
 		unsigned int id;
-		Role role;
 		getline(request, id_, delim);
 		getline(request, role_, delim);
 		id = static_cast<unsigned int>(stoi(id_));
-		role = stor(role_);
+		Role role = stor(role_);
 		if(!selectRole(id, user, role)){
 			Game game = getGame(id);
 			Room room = getRoom(game.Room_id());
