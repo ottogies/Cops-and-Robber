@@ -264,7 +264,7 @@ int arrested(unsigned int game_id, std::vector <Player>* robbers){
 			if(players[i].Rol() == Rob)
 				continue;
 			std::cout << "players[" << j << "].pos = " << players[j].Pos() << std::endl;
-			if(players[i].Pos() == players[j].Pos()){
+			if(static_cast<unsigned int>(players[i].Pos()) == static_cast<unsigned int>(players[j].Pos())){
 				std::cout << "same pos" << std::endl;
 				(*game).arrest(i);
 				(*robbers).push_back(players[i]);
