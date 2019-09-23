@@ -285,7 +285,8 @@ int gameWon(unsigned int game_id, Role* winner){
 	int i;
 	for(i=0; i<players.size(); i++){
 		if(players[i].Rol() == Rob && players[i].Stat() == Free){
-			return 0;
+			break;
+			//return 0;
 		}
 	}
 	if(i == players.size()){
