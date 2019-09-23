@@ -249,15 +249,19 @@ int movePlayer(unsigned int game_id, unsigned int player_id, vertex_id* cur_pos,
 }
 
 int arrested(unsigned int game_id, std::vector <Player>* robbers){
+	std::cout << "arrest" << std::endl;
 	std::list <Game>::iterator game;
 	for(game = games.begin(); game != games.end(); game++)
 		if((*game).ID() == game_id)
 			break;
 	std::vector <Player> players = (*game).Players();
+	std::cout << "players.size: " << players.size() << std::endl;
 	for(int i=0; i<players.size(); i++){
+		std::cout << "players[i].pos = " << players[i].Pos() << std::endl;
 		if(players[i].Rol() == Cop)
 			continue;
 		for(int j=0; j<players.size(); j++){
+			std::cout << "players[j].pos = " << players[j].Pos() << std::endl;
 			if(players[i].Rol() == Rob)
 				continue;
 			if(players[i].Pos() == players[j].Pos()){
