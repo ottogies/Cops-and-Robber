@@ -199,7 +199,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		if(room.Owner(user)){
 			game_id = startGame(room_id, cop_num, rob_num, width, height);
 			Game game = getGame(game_id);
-			response << "game_start," << game.ID() << delim << game.Cop_num() << delim << game.Rob_num();
+			response << "game_start," << game.ID() << delim << game.Cop_num() << delim << game.Rob_num() << delim << user.ID();
 			res = response.str();
 			std::map <int, User> users = room.Users();
 			std::map <int, User>::iterator it;
