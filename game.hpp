@@ -50,7 +50,8 @@ public:
 	std::vector <Player> Players();
 	void accept(User, Role);
 	int size();
-	void setPosition();
+	void initPos();
+	void setPos(int, unsigned int);
 };
 
 unsigned int startGame(unsigned int, int, int, int, int);
@@ -60,5 +61,6 @@ std::string rtos(Role);
 int selectRole(unsigned int, User, Role);
 int allSelected(unsigned int);
 int createPlayers(unsigned int);
-
+unsigned int checkCondition(unsigned int, unsigned int, User, unsigned int);
+int movePlayer(unsigned int, unsigned int, vertex_id*, unsigned int);
 #endif

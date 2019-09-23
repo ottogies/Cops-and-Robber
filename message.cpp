@@ -264,7 +264,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		//for(it = users.begin(); it != users.end(); it++)
 		//	s->send(it->second.Hdl(), res, msg->get_opcode());
 		for(int i=0; i<players.size(); i++)
-			s->send(players[i].Usr().Hdl(), res, msg->get_opcode());
+			s->send(players[i].Hdl(), res, msg->get_opcode());
     	//int vertex_size;
     	//Vertex* vertices = makeMap(&vertex_size);
     	int map_size = game.Map_size();
@@ -278,7 +278,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 			//for(it = users.begin(); it != users.end(); it++)
 			//	s->send(it->second.Hdl(), res, msg->get_opcode());
 			for(int i=0; i<players.size(); i++)
-				s->send(players[i].Usr().Hdl(), res, msg->get_opcode());
+				s->send(players[i].Hdl(), res, msg->get_opcode());
 		}
 		for(int i=0; i<map_size; i++){
 			for(int j=0; j<map[i].EdgeSize(); j++){
@@ -289,7 +289,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 				//for(it = users.begin(); it != users.end(); it++)
 				//	s->send(it->second.Hdl(), res, msg->get_opcode());
 				for(int i=0; i<players.size(); i++)
-					s->send(players[i].Usr().Hdl(), res, msg->get_opcode());
+					s->send(players[i].Hdl(), res, msg->get_opcode());
 			}
 		}
 //    	for(int i=0; i<vertex_size; i++){
@@ -313,7 +313,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		//for(it = users.begin(); it != users.end(); it++)
 		//	s->send(it->second.Hdl(), res, msg->get_opcode());
 		for(int i=0; i<players.size(); i++)
-			s->send(players[i].Usr().Hdl(), res, msg->get_opcode());	
+			s->send(players[i].Hdl(), res, msg->get_opcode());	
 	}
 	
 	if(req == "request_agent_create") {
@@ -328,6 +328,55 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 				response.str("");
 				response << "agent_create," << players[i].Usr().ID() << delim << players[i].ID() << delim 
 						 << rtos(players[i].Rol()) << delim << players[i].Pos(); 
+				res = response.str();
+				for(int j=0; j<players.size(); j++)
+					s->send(players[j].Hdl(), res, msg->get_opcode());
+			}
+			response.str("");
+			response << "agent_move_turn," << players[0].Usr().ID() << delim << players[0].ID();
+			res = response.str();
+			for(int j=0; j<players.size(); j++)
+				s->send(players[j].Hdl(), res, msg->get_opcode());
+		}
+	}
+	
+	if(req == "request_agent_turn") {
+		
+	}
+	
+	if(req == "request_agent_move") {
+		std::string game_id_, player_id_, pos_;
+		unsigned int game_id, player_id;
+		vertex_id pos, cur_pos;
+		getline(request, game_id_, delim);
+		getline(request, player_id_, delim);
+		getline(request, pos_, delim);
+		game_id = static_cast<unsigned int>(stoi(game_id_));
+		player_id = static_cast<unsigned int>(stoi(player_id_));
+		pos = static_cast<unsigned int>(stoi(pos_));
+		std::cout << "out" << std::endl;
+		if(!checkCondition(game_id, player_id, user, pos)){
+			std::cout << "check" << std::endl;
+			if(!movePlayer(game_id, player_id, &cur_pos, pos)){
+				std::cout << "move" << std::endl;
+				Game game = getGame(game_id);
+				std::vector <Player> players = game.Players();
+				int i;
+				for(i=0; i<players.size(); i++){
+					if(players[i].ID() == player_id){
+						response << "agent_move," << players[i].Usr().ID() << delim << players[i].ID() << delim 
+								 << players[i].Pos() << delim << cur_pos;
+						break;
+					}
+				}
+				res = response.str();
+				for(int j=0; j<players.size(); j++)
+					s->send(players[j].Hdl(), res, msg->get_opcode());
+				
+				if(++i == players.size())
+					i = 0;
+				response.str("");
+				response << "agent_move_turn," << players[i].Usr().ID() << delim << players[i].ID();
 				res = response.str();
 				for(int j=0; j<players.size(); j++)
 					s->send(players[j].Hdl(), res, msg->get_opcode());

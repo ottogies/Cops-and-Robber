@@ -44,13 +44,13 @@ int Game::size(){
 	//return users.size();
 	return players.size();
 }
-void Game::setPosition(){
+void Game::initPos(){
 	for(int i=0; i<players.size(); i++)
 		players[i].setPos(0);
 	int index = 0;
 	while(index != players.size()){
 		unsigned int pos = static_cast<unsigned int>(randomNum(1, map_size));
-		if(map[pos].ID() == ERASED)
+		if(map[pos-1].ID() == ERASED)
 			continue;
 		int i;
 		for(i=0; i<index; i++){
@@ -64,6 +64,9 @@ void Game::setPosition(){
 	}
 	for(int i=0; i<players.size(); i++)
 		std::cout << "player[" << i << "] pos: " << players[i].Pos() << std::endl; 
+}
+void Game::setPos(int i, unsigned int pos){
+	players[i].setPos(pos);	
 }
 
 unsigned int startGame(unsigned int room_id, int cop_num, int rob_num, int width, int height) {
@@ -167,6 +170,50 @@ int createPlayers(unsigned int game_id){
 			break;
 	if(game == games.end())		// no game number
 		return 1;
-	(*game).setPosition();
+	(*game).initPos();
 	return 0;
+}
+
+unsigned int checkCondition(unsigned int game_id, unsigned int player_id, User user, unsigned int pos){
+	std::list <Game>::iterator game;
+	for(game = games.begin(); game != games.end(); game++)
+		if((*game).ID() == game_id)
+			break;
+	if(game == games.end())		// no game number
+		return 1;
+	std::vector <Player> players = (*game).Players();
+	int i;
+	for(i=0; i<players.size(); i++)
+		if(players[i].ID() == player_id)
+			break;
+	if(i == players.size())		// no player number
+		return 1;
+	if(!(players[i].Usr() == user))		// not owner
+		return 1;
+	if(pos <= 0 || pos > (*game).Map_size())	// invalid vertex_id
+		return 1;
+	return 0;
+}
+
+int movePlayer(unsigned int game_id, unsigned int player_id, vertex_id* cur_pos, unsigned int to){
+	std::list <Game>::iterator game;
+	for(game = games.begin(); game != games.end(); game++)
+		if((*game).ID() == game_id)
+			break;
+	std::vector <Player> players = (*game).Players();
+	int i, j;
+	for(i=0; i<players.size(); i++)
+		if(players[i].ID() == player_id)
+			break;
+	*cur_pos = players[i].Pos();
+	int from = static_cast<int>(*cur_pos);
+	Vertex* map = (*game).Map();
+	for(j=0; j<map[from-1].EdgeSize(); j++){
+		if(map[from-1].getEdge(j).Dst() == to){
+			(*game).setPos(i, to);
+			return 0;
+		}
+	}
+	if(j == map[from-1].EdgeSize())	// not valid (no edge from 'from' to 'to')
+		return 0;
 }

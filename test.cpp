@@ -45,35 +45,16 @@ void Player::setPos(unsigned int pos_){
 	pos = pos_;	
 }
 
-int main(){
-	vector<Player> players;
-	for(int i=0; i<5; i++){
-		Role role = Cop;
-		//User user;
-		Player player(role);
-		players.push_back(player);
-	}
-	int index = 0;
-	int map_size = 15;
-	for(int i=0; i<players.size(); i++)
-		players[i].setPos(0);
-	while(index != players.size()){
-		unsigned int pos = static_cast<unsigned int>(randomNum(1, map_size));
-		int i;
-		for(i=0; i<index; i++){
-			if(players[i].Pos() == pos){
-				cout << "same " << i << " " << players[i].Pos() << " " << pos << endl;
-				break;
-			}
-		}
-		if(i == index){
-			players[index].setPos(pos);
-			index++;
-		}
-		//cout << i << " " << players[i].Pos() << endl;
-	}
-	for(int i=0; i<players.size(); i++)
-		cout << i << " " << players[i].Pos() << endl;
+movePlayer(int *p){
+	*p = 2348;
 }
+
+
+int main(){
+	int a;
+	movePlayer(&a);
+	cout << a;
+}
+
 
 
