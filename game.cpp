@@ -282,25 +282,24 @@ int gameWon(unsigned int game_id, Role* winner){
 		if((*game).ID() == game_id)
 			break;
 	std::vector <Player> players = (*game).Players();
-	int i;
-	for(i=0; i<players.size(); i++){
-		if(players[i].Rol() == Rob && players[i].Stat() == Free){
-			break;
-			//return 0;
-		}
-	}
-	if(i == players.size()){
-		*winner = Cop;
-		return 1;
-	}
-	for(int j=0; j<players.size(); j++){
-		if(players[j].Stat() == Free){
-			if(players[j].Turn() > (*game).Limit()){
+	for(int i=0; i<players.size(); i++){
+		if(players[i].Stat() == Free){
+			if(players[i].Turn() > (*game).Limit()){
 				*winner = Rob;
 				return 1;
 			}else {
 				return 0;
 			}
 		}
+	}
+	int j;
+	for(j=0; j<players.size(); j++){
+		if(players[j].Rol() == Rob && players[j].Stat() == Free){
+			return 0;
+		}
+	}
+	if(j == players.size()){
+		*winner = Cop;
+		return 1;
 	}
 }
