@@ -8,8 +8,16 @@ std::list <Game> games;
 //	user = user_;
 //	role = role_;
 //}
+unsigned int Player::ID(){ return player_id; }
 User Player::Usr() { return user; }
+websocketpp::connection_hdl Player::Hdl() const {
+	return user.Hdl();
+}
 Role Player::Rol(){ return role; }
+vertex_id Player::Pos(){ return pos; }
+void Player::setPos(unsigned int pos_){
+	pos = pos_;	
+}
 
 Game::Game(unsigned int room_id_, int cop_num_, int rob_num_, int width, int height){
 	game_id = static_cast <unsigned int>(randomNum(1, 9999));
@@ -35,6 +43,27 @@ void Game::accept(User user, Role role){
 int Game::size(){
 	//return users.size();
 	return players.size();
+}
+void Game::setPosition(){
+	for(int i=0; i<players.size(); i++)
+		players[i].setPos(0);
+	int index = 0;
+	while(index != players.size()){
+		unsigned int pos = static_cast<unsigned int>(randomNum(1, map_size));
+		if(map[pos].ID() == ERASED)
+			continue;
+		int i;
+		for(i=0; i<index; i++){
+			if(players[i].Pos() == pos)
+				break;
+		}
+		if(i == index){
+			players[index].setPos(pos);
+			index++;
+		}
+	}
+	for(int i=0; i<players.size(); i++)
+		std::cout << "player[" << i << "] pos: " << players[i].Pos() << std::endl; 
 }
 
 unsigned int startGame(unsigned int room_id, int cop_num, int rob_num, int width, int height) {
@@ -129,4 +158,15 @@ int allSelected(unsigned int game_id){
 		return 1;
 	else
 		return 0;
+}
+
+int createPlayers(unsigned int game_id){
+	std::list <Game>::iterator game;
+	for(game = games.begin(); game != games.end(); game++)
+		if((*game).ID() == game_id)
+			break;
+	if(game == games.end())		// no game number
+		return 1;
+	(*game).setPosition();
+	return 0;
 }

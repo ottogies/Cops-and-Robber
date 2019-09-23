@@ -315,6 +315,25 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		for(int i=0; i<players.size(); i++)
 			s->send(players[i].Usr().Hdl(), res, msg->get_opcode());	
 	}
+	
+	if(req == "request_agent_create") {
+		std::string id_;
+		unsigned int id;
+		getline(request, id_, delim);
+		id = static_cast<unsigned int>(stoi(id_));
+		if(!createPlayers(id)){
+			Game game = getGame(id);
+			std::vector <Player> players = game.Players();
+			for(int i=0; i<players.size(); i++){
+				response.str("");
+				response << "agent_create," << players[i].Usr().ID() << delim << players[i].ID() << delim 
+						 << rtos(players[i].Rol()) << delim << players[i].Pos(); 
+				res = response.str();
+				for(int j=0; j<players.size(); j++)
+					s->send(players[j].Hdl(), res, msg->get_opcode());
+			}
+		}
+	}
 
 //	// check for a special command to instruct the server to stop listening so
 //    // it can be cleanly exited.

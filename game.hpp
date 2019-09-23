@@ -17,11 +17,16 @@ class Player {
 	vertex_id pos;
 public:
 	Player(User user_, Role role_){
+		player_id = static_cast<unsigned int>(randomNum(1, 9999));
 		user = user_;
 		role = role_;
 	}
+	unsigned int ID();
 	User Usr();
+	websocketpp::connection_hdl Hdl() const;
 	Role Rol();
+	vertex_id Pos();
+	void setPos(unsigned int);
 };
 
 class Game {
@@ -45,6 +50,7 @@ public:
 	std::vector <Player> Players();
 	void accept(User, Role);
 	int size();
+	void setPosition();
 };
 
 unsigned int startGame(unsigned int, int, int, int, int);
@@ -53,5 +59,6 @@ Role stor(std::string);
 std::string rtos(Role);
 int selectRole(unsigned int, User, Role);
 int allSelected(unsigned int);
+int createPlayers(unsigned int);
 
 #endif
