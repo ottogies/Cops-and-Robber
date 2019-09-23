@@ -288,7 +288,7 @@ int gameWon(unsigned int game_id, Role* winner){
 				*winner = Rob;
 				return 1;
 			}else {
-				return 0;
+				break;
 			}
 		}
 	}
