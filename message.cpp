@@ -388,8 +388,10 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 						s->send(players[j].Hdl(), res, msg->get_opcode());
 				}
 				
-				if(++i == players.size())
-					i = 0;
+				do{
+					if(++i == players.size())
+						i = 0;
+				}while(players[i].Stat() == Arrested);
 				response.str("");
 				response << "agent_move_turn," << players[i].Usr().ID() << delim << players[i].ID() << delim 
 					     << players[i].Turn() << delim << game.Turn();
