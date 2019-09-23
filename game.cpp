@@ -15,6 +15,7 @@ websocketpp::connection_hdl Player::Hdl() const {
 }
 Role Player::Rol(){ return role; }
 vertex_id Player::Pos(){ return pos; }
+State Player::Stat(){ return state; }
 int Player::Turn(){ return turn; }
 void Player::setPos(unsigned int pos_){
 	pos = pos_;	
@@ -23,6 +24,10 @@ int Player::operator++(int){
 	int t = turn;
 	turn++;
 	return t;
+}
+void Player::arrested(){
+	if(role == Rob)
+		state = Arrested;
 }
 
 Game::Game(unsigned int room_id_, int cop_num_, int rob_num_, int width, int height){
@@ -33,6 +38,7 @@ Game::Game(unsigned int room_id_, int cop_num_, int rob_num_, int width, int hei
 	map = makeMap(width, height);
 	map_size = width * height;
 	turn = 1;
+	limit = (width + height) * 2;
 }
 unsigned int Game::ID(){ return game_id; }
 unsigned int Game::Room_id(){ return room_id; }
@@ -43,6 +49,7 @@ int Game::Map_size(){ return map_size; }
 //std::multimap <Role, User> Game::Users(){ return users; }
 std::vector <Player> Game::Players(){ return players; }
 int Game::Turn(){ return turn; }
+int Game::Limit(){ return limit; }
 void Game::accept(User user, Role role){
 	//users.insert( std::pair<Role, User>(role, user) );
 	Player player(user, role);
@@ -83,6 +90,9 @@ int Game::operator++(int){
 	int t = turn;
 	turn++;
 	return t;
+}
+void Game::arrest(int i){
+	players[i].arrested();
 }
 
 unsigned int startGame(unsigned int room_id, int cop_num, int rob_num, int width, int height) {
@@ -208,6 +218,8 @@ unsigned int checkCondition(unsigned int game_id, unsigned int player_id, User u
 		return 1;
 	if(pos <= 0 || pos > (*game).Map_size())	// invalid vertex_id
 		return 1;
+	if(players[i].Stat() == Arrested)	// robber arrested
+		return 1;
 	return 0;
 }
 
@@ -234,4 +246,54 @@ int movePlayer(unsigned int game_id, unsigned int player_id, vertex_id* cur_pos,
 	}
 	if(j == map[from-1].EdgeSize())	// not valid (no edge from 'from' to 'to')
 		return 0;
+}
+
+int arrested(unsigned int game_id, std::vector <Player>* robbers){
+	std::list <Game>::iterator game;
+	for(game = games.begin(); game != games.end(); game++)
+		if((*game).ID() == game_id)
+			break;
+	std::vector <Player> players = (*game).Players();
+	for(int i=0; i<players.size(); i++){
+		if(players[i].Rol() == Cop)
+			continue;
+		for(int j=0; j<players.size(); j++){
+			if(players[i].Rol() == Rob)
+				continue;
+			if(players[i].Pos() == players[j].Pos()){
+				(*game).arrest(i);
+				(*robbers).push_back(players[i]);
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+int gameWon(unsigned int game_id, Role* winner){
+	std::list <Game>::iterator game;
+	for(game = games.begin(); game != games.end(); game++)
+		if((*game).ID() == game_id)
+			break;
+	std::vector <Player> players = (*game).Players();
+	int i;
+	for(i=0; i<players.size(); i++){
+		if(players[i].Rol() == Rob && players[i].Stat() == Free){
+			return 0;
+		}
+	}
+	if(i == players.size()){
+		*winner = Cop;
+		return 1;
+	}
+	for(int j=0; j<players.size(); j++){
+		if(players[j].Stat() == Free){
+			if(players[j].Turn() > (*game).Limit()){
+				*winner = Rob;
+				return 1;
+			}else {
+				return 0;
+			}
+		}
+	}
 }

@@ -367,6 +367,26 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 				for(int j=0; j<players.size(); j++)
 					s->send(players[j].Hdl(), res, msg->get_opcode());
 				
+				std::vector <Player> robbers;
+				if(arrested(game_id, &robbers)){
+					for(int k=0; k<robbers.size(); k++){
+						response.str("");
+						response << "agent_caught," << robbers[k].Usr().ID() << delim << robbers[k].ID();
+						res = response.str();
+						for(int j=0; j<players.size(); j++)
+							s->send(players[j].Hdl(), res, msg->get_opcode());
+					}
+				}
+				
+				Role winner;
+				if(gameWon(game_id, &winner)){
+					response.str("");
+					response << "game_end," << rtos(winner);
+					res = response.str();
+					for(int j=0; j<players.size(); j++)
+						s->send(players[j].Hdl(), res, msg->get_opcode());
+				}
+				
 				if(++i == players.size())
 					i = 0;
 				response.str("");
