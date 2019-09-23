@@ -13,20 +13,23 @@ class Player {
 	unsigned int player_id;
 	User user;
 	Role role;
-	int turn;
 	vertex_id pos;
+	int turn;
 public:
 	Player(User user_, Role role_){
 		player_id = static_cast<unsigned int>(randomNum(1, 9999));
 		user = user_;
 		role = role_;
+		turn = 0;
 	}
 	unsigned int ID();
 	User Usr();
 	websocketpp::connection_hdl Hdl() const;
 	Role Rol();
 	vertex_id Pos();
+	int Turn();
 	void setPos(unsigned int);
+	int operator++(int);
 };
 
 class Game {
@@ -38,6 +41,7 @@ class Game {
 	int map_size;
 	//std::multimap <Role, User> users;
 	std::vector <Player> players;
+	int turn;
 public:
 	Game(unsigned int, int, int, int, int);
 	unsigned int ID();
@@ -48,10 +52,13 @@ public:
 	int Map_size();
 	//std::multimap <Role, User> Users();
 	std::vector <Player> Players();
+	int Turn();
 	void accept(User, Role);
 	int size();
 	void initPos();
 	void setPos(int, unsigned int);
+	void incTurn(int);
+	int operator++(int);
 };
 
 unsigned int startGame(unsigned int, int, int, int, int);

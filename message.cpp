@@ -333,15 +333,12 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 					s->send(players[j].Hdl(), res, msg->get_opcode());
 			}
 			response.str("");
-			response << "agent_move_turn," << players[0].Usr().ID() << delim << players[0].ID();
+			response << "agent_move_turn," << players[0].Usr().ID() << delim << players[0].ID() << delim 
+					 << players[0].Turn() << delim << game.Turn();
 			res = response.str();
 			for(int j=0; j<players.size(); j++)
 				s->send(players[j].Hdl(), res, msg->get_opcode());
 		}
-	}
-	
-	if(req == "request_agent_turn") {
-		
 	}
 	
 	if(req == "request_agent_move") {
@@ -354,11 +351,8 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 		game_id = static_cast<unsigned int>(stoi(game_id_));
 		player_id = static_cast<unsigned int>(stoi(player_id_));
 		pos = static_cast<unsigned int>(stoi(pos_));
-		std::cout << "out" << std::endl;
 		if(!checkCondition(game_id, player_id, user, pos)){
-			std::cout << "check" << std::endl;
 			if(!movePlayer(game_id, player_id, &cur_pos, pos)){
-				std::cout << "move" << std::endl;
 				Game game = getGame(game_id);
 				std::vector <Player> players = game.Players();
 				int i;
@@ -376,7 +370,8 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 				if(++i == players.size())
 					i = 0;
 				response.str("");
-				response << "agent_move_turn," << players[i].Usr().ID() << delim << players[i].ID();
+				response << "agent_move_turn," << players[i].Usr().ID() << delim << players[i].ID() << delim 
+					     << players[i].Turn() << delim << game.Turn();
 				res = response.str();
 				for(int j=0; j<players.size(); j++)
 					s->send(players[j].Hdl(), res, msg->get_opcode());

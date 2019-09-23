@@ -15,8 +15,14 @@ websocketpp::connection_hdl Player::Hdl() const {
 }
 Role Player::Rol(){ return role; }
 vertex_id Player::Pos(){ return pos; }
+int Player::Turn(){ return turn; }
 void Player::setPos(unsigned int pos_){
 	pos = pos_;	
+}
+int Player::operator++(int){
+	int t = turn;
+	turn++;
+	return t;
 }
 
 Game::Game(unsigned int room_id_, int cop_num_, int rob_num_, int width, int height){
@@ -26,6 +32,7 @@ Game::Game(unsigned int room_id_, int cop_num_, int rob_num_, int width, int hei
 	rob_num = rob_num_;
 	map = makeMap(width, height);
 	map_size = width * height;
+	turn = 1;
 }
 unsigned int Game::ID(){ return game_id; }
 unsigned int Game::Room_id(){ return room_id; }
@@ -35,6 +42,7 @@ Vertex* Game::Map(){ return map; }
 int Game::Map_size(){ return map_size; }
 //std::multimap <Role, User> Game::Users(){ return users; }
 std::vector <Player> Game::Players(){ return players; }
+int Game::Turn(){ return turn; }
 void Game::accept(User user, Role role){
 	//users.insert( std::pair<Role, User>(role, user) );
 	Player player(user, role);
@@ -67,6 +75,14 @@ void Game::initPos(){
 }
 void Game::setPos(int i, unsigned int pos){
 	players[i].setPos(pos);	
+}
+void Game::incTurn(int i){
+	players[i]++;
+}
+int Game::operator++(int){
+	int t = turn;
+	turn++;
+	return t;
 }
 
 unsigned int startGame(unsigned int room_id, int cop_num, int rob_num, int width, int height) {
@@ -211,6 +227,8 @@ int movePlayer(unsigned int game_id, unsigned int player_id, vertex_id* cur_pos,
 	for(j=0; j<map[from-1].EdgeSize(); j++){
 		if(map[from-1].getEdge(j).Dst() == to){
 			(*game).setPos(i, to);
+			(*game).incTurn(i);
+			(*game)++;
 			return 0;
 		}
 	}
