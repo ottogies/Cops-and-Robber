@@ -257,16 +257,14 @@ int arrested(unsigned int game_id, std::vector <Player>* robbers){
 	std::vector <Player> players = (*game).Players();
 	std::cout << "players.size: " << players.size() << std::endl;
 	for(int i=0; i<players.size(); i++){
-		std::cout << "players[" << i << "].pos = " << players[i].Pos()+100 << std::endl;
+		std::cout << "players[" << i << "].pos = " << players[i].Pos() << std::endl;
 		if(players[i].Rol() == Cop)
 			continue;
 		for(int j=0; j<players.size(); j++){
-			if(players[i].Rol() == Rob)
+			if(players[j].Rol() == Rob)
 				continue;
-			std::cout << "players[" << j << "].pos = " << players[j].Pos()+100 << std::endl;
-			std::cout << "players[i].pos-players[j].pos " << players[i].Pos() - players[j].Pos() << std::endl;
-			if(players[i].Pos() - players[j].Pos() == 0){
-			//if(static_cast<int>(players[i].Pos()) == static_cast<int>(players[j].Pos())){
+			std::cout << "players[" << j << "].pos = " << players[j].Pos() << std::endl;
+			if(players[i].Pos() == players[j].Pos()){
 				std::cout << "same pos" << std::endl;
 				(*game).arrest(i);
 				(*robbers).push_back(players[i]);
