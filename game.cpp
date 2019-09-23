@@ -261,8 +261,10 @@ int arrested(unsigned int game_id, std::vector <Player>* robbers){
 			if(players[i].Rol() == Rob)
 				continue;
 			if(players[i].Pos() == players[j].Pos()){
+				std::cout << "same pos" << std::endl;
 				(*game).arrest(i);
 				(*robbers).push_back(players[i]);
+				std::cout << (*robbers).size() << std::endl;
 				return 1;
 			}
 		}

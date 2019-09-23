@@ -369,6 +369,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 				
 				std::vector <Player> robbers;
 				if(arrested(game_id, &robbers)){
+					std::cout << "arrested " << robbers.size() << std::endl; 
 					for(int k=0; k<robbers.size(); k++){
 						response.str("");
 						response << "agent_caught," << robbers[k].Usr().ID() << delim << robbers[k].ID();
