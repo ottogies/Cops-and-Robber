@@ -44,7 +44,6 @@ class Game {
 	int rob_num;
 	Vertex* map;
 	int map_size;
-	//std::multimap <Role, User> users;
 	std::vector <Player> players;
 	int turn;
 	int limit;
@@ -56,7 +55,6 @@ public:
 	int Rob_num();
 	Vertex* Map();
 	int Map_size();
-	//std::multimap <Role, User> Users();
 	std::vector <Player> Players();
 	int Turn();
 	int Limit();

@@ -37,8 +37,6 @@ public:
 };
 
 Vertex* makeMap(int, int);
-//Vertex* makeMap(int *);
-//Vertex* makeMap();
 int randomNum(int, int);
 void createVertex(int, int, Vertex*);
 void excludeVertex(int, Vertex*, std::set <vertex_id> &);

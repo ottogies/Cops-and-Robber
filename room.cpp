@@ -48,7 +48,6 @@ Room::Room(std::string title_, int capacity_, User owner_){
 unsigned int Room::ID(){ return room_id; }
 std::string Room::Title(){ return title; }
 int Room::Capacity(){ return capacity; }
-//std::list <User> Room::Users(){ return users; }
 std::map <int, User> Room::Users(){ return users; }
 int Room::Index(User user){
 	std::map <int, User>::iterator it;
@@ -60,7 +59,6 @@ int Room::Index(User user){
 	return -1; 	//user not in the room 
 }
 void Room::enter(User user){
-	//users.push_back(user);
 	std::map <int, User>::iterator it = users.begin();
 	int i = -1;
 	do{
@@ -70,20 +68,10 @@ void Room::enter(User user){
 	users.insert( std::pair<int, User>(i, user) );
 }
 int Room::leave(User user){
-//	std::list <User>::iterator it;
-//	for(it = users.begin(); it != users.end(); it++){
-//		//if((*it).lock() == user.lock()){
-//		if(*it == user){
-//			users.erase(it);
-//			return 0;
-//		}
-//	}
-//	return 1;
 	std::map <int, User>::iterator it;
 	for(it = users.begin(); it != users.end(); it++){
 		if(it->second == user){
 			users.erase(it);
-			//if user가 방장이라면 
 			return 0;
 		}
 	}
@@ -102,10 +90,6 @@ int Room::Owner(User user){
 		return 0;
 }
 void Room::printUsers(){
-//	std::list <User>::iterator user;
-//	for(user = users.begin(); user != users.end(); user++)
-//		std::cout << (*user).ID() << " ";
-//	std::cout << std::endl;
 	std::map <int, User>::iterator user;
 	for(user = users.begin(); user != users.end(); user++)
 		std::cout << user->second.ID() << " ";
@@ -205,20 +189,6 @@ int checkRoom(unsigned int id){
 			return 2;
 	}
 }
-
-//Room leaveRoom(unsigned int room_id, User user){
-//	std::list <Room>::iterator room;
-//	for(room = rooms.begin(); room != rooms.end(); room++){
-//		if((*room).ID() == room_id){
-//			if(!(*room).leave(user))
-//				return *room;
-//			else{					//user not in the room
-//				Room emptyRoom;
-//				return emptyRoom;
-//			}
-//		}
-//	}
-//}
 
 std::map <int, User> leaveRoom(unsigned int room_id, User user){
 	std::map <int, User> users; 

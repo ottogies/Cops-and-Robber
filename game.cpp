@@ -5,8 +5,11 @@
 std::list <Game> games;
 
 //Player::Player(User user_, Role role_){
+//	player_id = static_cast<unsigned int>(randomNum(1, 9999));
 //	user = user_;
 //	role = role_;
+//	state = Free;
+//	turn = 1;
 //}
 unsigned int Player::ID(){ return player_id; }
 User Player::Usr() { return user; }
@@ -46,17 +49,14 @@ int Game::Cop_num(){ return cop_num; }
 int Game::Rob_num(){ return rob_num; }
 Vertex* Game::Map(){ return map; }
 int Game::Map_size(){ return map_size; }
-//std::multimap <Role, User> Game::Users(){ return users; }
 std::vector <Player> Game::Players(){ return players; }
 int Game::Turn(){ return turn; }
 int Game::Limit(){ return limit; }
 void Game::accept(User user, Role role){
-	//users.insert( std::pair<Role, User>(role, user) );
 	Player player(user, role);
 	players.push_back(player);
 }
 int Game::size(){
-	//return users.size();
 	return players.size();
 }
 void Game::initPos(){
@@ -143,14 +143,6 @@ int selectRole(unsigned int game_id, User user, Role role){
 	if(room.Index(user) == -1)		// user not in the room
 		return 1;
 	std::cout << "selected Role: " << role << " " << rtos(role) << std::endl;
-	//std::multimap <Role, User> users = (*game).Users();
-	//std::multimap <Role, User>::iterator it;
-//	for(it = users.begin(); it != users.end(); it++){
-//		if(it->first == role)
-//			count++;
-//		if(it->second == user)
-//			return 1;
-//	}
 	std::vector <Player> players = (*game).Players();
 	for(int i=0; i<players.size(); i++){
 		if(players[i].Rol() == role)
@@ -249,21 +241,17 @@ int movePlayer(unsigned int game_id, unsigned int player_id, vertex_id* cur_pos,
 }
 
 int arrested(unsigned int game_id, std::vector <Player>* robbers){
-	std::cout << "arrest" << std::endl;
 	std::list <Game>::iterator game;
 	for(game = games.begin(); game != games.end(); game++)
 		if((*game).ID() == game_id)
 			break;
 	std::vector <Player> players = (*game).Players();
-	std::cout << "players.size: " << players.size() << std::endl;
 	for(int i=0; i<players.size(); i++){
-		std::cout << "players[" << i << "].pos = " << players[i].Pos() << std::endl;
 		if(players[i].Rol() == Cop)
 			continue;
 		for(int j=0; j<players.size(); j++){
 			if(players[j].Rol() == Rob)
 				continue;
-			std::cout << "players[" << j << "].pos = " << players[j].Pos() << std::endl;
 			if(players[i].Pos() == players[j].Pos()){
 				std::cout << "same pos" << std::endl;
 				(*game).arrest(i);
